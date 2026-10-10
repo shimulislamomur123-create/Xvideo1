@@ -1,0 +1,684 @@
+{% extends "videos/base.html" %}
+
+{% block title %}Explore Websites | XVideos{% endblock %}
+
+{% block content %}
+
+<section class="hero">
+    <span class="eyebrow">YOUR WEB, YOUR WAY</span>
+    <h1>Discover Your Favorite Websites</h1>
+    <p>All your connected websites in one beautiful place.</p>
+</section>
+
+<!-- Website Search -->
+<form action="/" method="get" class="search-form">
+    <select name="site" required>
+        <option value="">Choose a website</option>
+        {% for video in videos %}
+            <option value="{{ video.id }}">
+                {{ video.title }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <input
+        type="search"
+        name="q"
+        placeholder="What do you want to search?"
+        value="{{ request.GET.q|default:'' }}"
+        required
+    >
+
+    <button type="submit">Search ↗</button>
+</form>
+
+
+<!-- Automatic Website Slider -->
+<section id="categories" class="section">
+    <div class="section-heading">
+        <div>
+            <h2>Explore Websites</h2>
+            <p>Swipe or use the arrows to explore.</p>
+        </div>
+
+        <div class="slider-controls">
+            <button type="button" id="slide-left" aria-label="Previous">‹</button>
+            <button type="button" id="slide-right" aria-label="Next">›</button>
+        </div>
+    </div>
+
+    <div class="slider-window" id="slider-window">
+        <div class="website-slider" id="website-slider">
+            {% for video in videos %}
+                <a
+                    class="slider-card"
+                    href="{{ video.website_url }}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    <div class="slider-preview">
+                        <img
+                            src="https://image.thum.io/get/width/600/crop/350/noanimate/{{ video.website_url }}"
+                            alt="{{ video.title }} website screenshot"
+                            loading="lazy"
+                            onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';"
+                        >
+                        <span class="preview-fallback">🌐</span>
+                        <span class="preview-open">↗ Open Website</span>
+                    </div>
+
+                    <div class="slider-info">
+                        <span class="site-category">{{ video.category }}</span>
+                        <h3>{{ video.title }}</h3>
+                        <span class="visit-label">Visit website ↗</span>
+                    </div>
+                </a>
+            {% empty %}
+                <p class="empty-message">
+                    No websites added yet. Add websites from the Admin Panel.
+                </p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+
+<!-- All Website Cards -->
+<section id="websites" class="section">
+    <div class="section-heading">
+        <div>
+            <h2>All Connected Websites</h2>
+            <p>Click any card to open the original website.</p>
+        </div>
+
+        <span class="count-pill">
+            {{ videos|length }} connected
+        </span>
+    </div>
+
+    <div class="website-grid">
+        {% for video in videos %}
+            <a
+                class="website-card"
+                href="{{ video.website_url }}"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                <div class="directory-preview">
+                    <img
+                        src="https://image.thum.io/get/width/600/crop/300/noanimate/{{ video.website_url }}"
+                        alt="{{ video.title }} website preview"
+                        loading="lazy"
+                        onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';"
+                    >
+                    <span class="directory-fallback">🌐</span>
+                </div>
+
+                <div class="card-details">
+                    <div class="site-icon">↗</div>
+
+                    <div class="site-text">
+                        <span class="site-category">{{ video.category }}</span>
+                        <h3>{{ video.title }}</h3>
+                        <p>Open original website</p>
+                    </div>
+
+                    <span class="external-link">↗</span>
+                </div>
+            </a>
+        {% empty %}
+            <div class="empty-state">
+                <div>🌐</div>
+                <h3>No websites added yet</h3>
+                <p>Add your first website from Django Admin.</p>
+                <a href="/admin/">＋ Add Website</a>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+
+
+<style>
+    /* Hero */
+    .hero {
+        padding: 35px 10px 38px;
+        text-align: center;
+    }
+
+    .eyebrow {
+        display: inline-block;
+        padding: 8px 15px;
+        border-radius: 30px;
+        background: color-mix(in srgb, var(--primary) 12%, white);
+        color: var(--primary);
+        font-size: 13px;
+        font-weight: 800;
+        letter-spacing: 1px;
+    }
+
+    .hero h1 {
+        margin: 22px auto 14px;
+        font-size: clamp(36px, 5.5vw, 64px);
+        line-height: 1.08;
+        letter-spacing: -2px;
+    }
+
+    .hero p {
+        max-width: 650px;
+        margin: auto;
+        color: #71809a;
+        font-size: 18px;
+        line-height: 1.7;
+    }
+
+    /* Search form */
+    .search-form {
+        display: flex;
+        gap: 12px;
+        max-width: 900px;
+        margin: 0 auto 55px;
+        padding: 12px;
+        border: 1px solid #e7ebf2;
+        border-radius: 18px;
+        background: white;
+        box-shadow: 0 12px 35px rgba(30, 42, 75, .06);
+    }
+
+    .search-form select,
+    .search-form input {
+        min-width: 0;
+        padding: 15px;
+        border: 1px solid #e7ebf2;
+        border-radius: 11px;
+        background: #fff;
+        color: #172033;
+        font-size: 15px;
+    }
+
+    .search-form select {
+        width: 32%;
+    }
+
+    .search-form input {
+        flex: 1;
+    }
+
+    .search-form button {
+        padding: 14px 24px;
+        border: 0;
+        border-radius: 11px;
+        background: var(--primary);
+        color: white;
+        font-size: 15px;
+        font-weight: 750;
+        cursor: pointer;
+    }
+
+    .search-form button:hover {
+        filter: brightness(.92);
+    }
+
+    /* Section headings */
+    .section {
+        margin-top: 55px;
+    }
+
+    .section-heading {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        margin-bottom: 22px;
+    }
+
+    .section-heading h2 {
+        margin: 0;
+        font-size: clamp(25px, 3vw, 34px);
+        letter-spacing: -.8px;
+    }
+
+    .section-heading p {
+        margin: 7px 0 0;
+        color: #71809a;
+        font-size: 15px;
+    }
+
+    .count-pill {
+        flex-shrink: 0;
+        padding: 9px 14px;
+        border-radius: 30px;
+        background: color-mix(in srgb, var(--primary) 12%, white);
+        color: var(--primary);
+        font-size: 13px;
+        font-weight: 750;
+    }
+
+    /* Slider */
+    .slider-controls {
+        display: flex;
+        gap: 9px;
+    }
+
+    .slider-controls button {
+        width: 46px;
+        height: 46px;
+        border: 1px solid #e5e8f0;
+        border-radius: 50%;
+        background: white;
+        color: #172033;
+        font-size: 30px;
+        cursor: pointer;
+        transition: .2s;
+    }
+
+    .slider-controls button:hover {
+        background: var(--primary);
+        color: white;
+        border-color: var(--primary);
+    }
+
+    .slider-window {
+        overflow-x: auto;
+        overflow-y: hidden;
+        scrollbar-width: none;
+        scroll-behavior: smooth;
+        padding: 3px 2px 18px;
+    }
+
+    .slider-window::-webkit-scrollbar {
+        display: none;
+    }
+
+    .website-slider {
+        display: flex;
+        gap: 22px;
+        width: max-content;
+    }
+
+    .slider-card {
+        display: block;
+        width: 300px;
+        overflow: hidden;
+        border: 1px solid #e7ebf2;
+        border-radius: 19px;
+        background: white;
+        color: #172033;
+        text-decoration: none;
+        box-shadow: 0 5px 20px rgba(30, 42, 75, .035);
+        transition: transform .25s, box-shadow .25s;
+    }
+
+    .slider-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 16px 35px rgba(30, 42, 75, .11);
+    }
+
+    .slider-preview {
+        position: relative;
+        height: 185px;
+        overflow: hidden;
+        background: #f0efff;
+    }
+
+    .slider-preview img,
+    .directory-preview img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: top;
+    }
+
+    .preview-fallback,
+    .directory-fallback {
+        display: none;
+        place-items: center;
+        width: 100%;
+        height: 100%;
+        font-size: 50px;
+        background: color-mix(in srgb, var(--primary) 12%, white);
+    }
+
+    .preview-open {
+        position: absolute;
+        right: 12px;
+        bottom: 12px;
+        padding: 7px 11px;
+        border-radius: 30px;
+        background: rgba(20, 25, 40, .8);
+        color: white;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .slider-info {
+        padding: 18px;
+    }
+
+    .site-category {
+        display: inline-block;
+        color: var(--primary);
+        font-size: 12px;
+        font-weight: 750;
+        text-transform: uppercase;
+        letter-spacing: .6px;
+    }
+
+    .slider-info h3 {
+        overflow: hidden;
+        margin: 8px 0 13px;
+        font-size: 19px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .visit-label {
+        color: #71809a;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    /* Website directory */
+    .website-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 24px;
+    }
+
+    .website-card {
+        display: block;
+        min-width: 0;
+        overflow: hidden;
+        border: 1px solid #e7ebf2;
+        border-radius: 19px;
+        background: white;
+        color: #172033;
+        text-decoration: none;
+        box-shadow: 0 5px 20px rgba(30, 42, 75, .035);
+        transition: transform .25s, box-shadow .25s,
+                    border-color .25s;
+    }
+
+    .website-card:hover {
+        transform: translateY(-5px);
+        border-color: color-mix(in srgb, var(--primary) 45%, white);
+        box-shadow: 0 15px 35px rgba(30, 42, 75, .09);
+    }
+
+    .directory-preview {
+        position: relative;
+        height: 210px;
+        overflow: hidden;
+        background: #f0efff;
+    }
+
+    .directory-preview img {
+        transition: transform .4s;
+    }
+
+    .website-card:hover .directory-preview img {
+        transform: scale(1.04);
+    }
+
+    .card-details {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 19px;
+    }
+
+    .site-icon {
+        display: grid;
+        place-items: center;
+        width: 52px;
+        height: 52px;
+        flex-shrink: 0;
+        border-radius: 15px;
+        background: color-mix(in srgb, var(--primary) 12%, white);
+        color: var(--primary);
+        font-size: 25px;
+        font-weight: 800;
+    }
+
+    .site-text {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .site-text h3 {
+        overflow: hidden;
+        margin: 5px 0;
+        font-size: 18px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .site-text p {
+        margin: 0;
+        color: #71809a;
+        font-size: 13px;
+    }
+
+    .external-link {
+        flex-shrink: 0;
+        color: var(--primary);
+        font-size: 23px;
+    }
+
+    /* Empty state */
+    .empty-message {
+        padding: 20px;
+        color: #71809a;
+    }
+
+    .empty-state {
+        grid-column: 1 / -1;
+        padding: 55px 20px;
+        border: 1px dashed #d8deea;
+        border-radius: 20px;
+        background: white;
+        text-align: center;
+    }
+
+    .empty-state > div {
+        font-size: 48px;
+    }
+
+    .empty-state h3 {
+        margin-bottom: 8px;
+        font-size: 24px;
+    }
+
+    .empty-state p {
+        color: #71809a;
+    }
+
+    .empty-state a {
+        display: inline-block;
+        margin-top: 10px;
+        padding: 12px 18px;
+        border-radius: 10px;
+        background: var(--primary);
+        color: white;
+        text-decoration: none;
+        font-weight: 700;
+    }
+
+    @media (min-width: 1500px) {
+        .website-grid {
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 1000px) {
+        .website-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .slider-card {
+            width: 270px;
+        }
+    }
+
+    @media (max-width: 650px) {
+        .hero {
+            padding-top: 18px;
+        }
+
+        .hero h1 {
+            letter-spacing: -1px;
+        }
+
+        .hero p {
+            font-size: 15px;
+        }
+
+        .search-form {
+            flex-wrap: wrap;
+            padding: 10px;
+        }
+
+        .search-form select,
+        .search-form input,
+        .search-form button {
+            width: 100%;
+            flex: auto;
+        }
+
+        .section-heading {
+            align-items: flex-start;
+        }
+
+        .slider-controls button {
+            width: 39px;
+            height: 39px;
+        }
+
+        .slider-card {
+            width: 245px;
+        }
+
+        .slider-preview {
+            height: 155px;
+        }
+
+        .website-grid {
+            grid-template-columns: 1fr;
+            gap: 18px;
+        }
+
+        .directory-preview {
+            height: 190px;
+        }
+    }
+</style>
+
+{% endblock %}
+
+
+{% block extra_js %}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const sliderWindow = document.getElementById("slider-window");
+    const slider = document.getElementById("website-slider");
+    const leftButton = document.getElementById("slide-left");
+    const rightButton = document.getElementById("slide-right");
+
+    if (!sliderWindow || !slider || slider.children.length < 2) {
+        return;
+    }
+
+    let timer = null;
+    let paused = false;
+
+    function stepSize() {
+        const card = slider.querySelector(".slider-card");
+        if (!card) return 300;
+
+        const gap = parseFloat(getComputedStyle(slider).gap) || 22;
+        return card.getBoundingClientRect().width + gap;
+    }
+
+    function moveRight() {
+        const maxScroll =
+            sliderWindow.scrollWidth - sliderWindow.clientWidth;
+
+        if (sliderWindow.scrollLeft >= maxScroll - 5) {
+            sliderWindow.scrollTo({ left: 0, behavior: "smooth" });
+        } else {
+            sliderWindow.scrollBy({
+                left: stepSize(),
+                behavior: "smooth"
+            });
+        }
+    }
+
+    function moveLeft() {
+        if (sliderWindow.scrollLeft <= 5) {
+            sliderWindow.scrollTo({
+                left: sliderWindow.scrollWidth,
+                behavior: "smooth"
+            });
+        } else {
+            sliderWindow.scrollBy({
+                left: -stepSize(),
+                behavior: "smooth"
+            });
+        }
+    }
+
+    function stopAutoSlide() {
+        if (timer) {
+            clearInterval(timer);
+            timer = null;
+        }
+    }
+
+    function startAutoSlide() {
+        stopAutoSlide();
+
+        timer = setInterval(function () {
+            if (!paused && !document.hidden) {
+                moveRight();
+            }
+        }, 3000);
+    }
+
+    leftButton.addEventListener("click", function () {
+        moveLeft();
+        startAutoSlide();
+    });
+
+    rightButton.addEventListener("click", function () {
+        moveRight();
+        startAutoSlide();
+    });
+
+    sliderWindow.addEventListener("mouseenter", function () {
+        paused = true;
+    });
+
+    sliderWindow.addEventListener("mouseleave", function () {
+        paused = false;
+    });
+
+    sliderWindow.addEventListener("focusin", function () {
+        paused = true;
+    });
+
+    sliderWindow.addEventListener("focusout", function () {
+        paused = false;
+    });
+
+    document.addEventListener("visibilitychange", function () {
+        if (document.hidden) {
+            stopAutoSlide();
+        } else {
+            startAutoSlide();
+        }
+    });
+
+    startAutoSlide();
+});
+</script>
+{% endblock %}

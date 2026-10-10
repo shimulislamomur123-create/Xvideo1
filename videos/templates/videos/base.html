@@ -1,0 +1,512 @@
+
+{% load static %}
+<html lang="en">
+<head>    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}XVideos{% endblock %}</title>
+
+    <style>
+        :root {
+            --primary: #5b5cf0;
+            --ink: #172033;
+            --muted: #71809a;
+            --line: #e7ebf2;
+            --page: #fbfcff;
+        }
+
+        
+            /* Dark theme colors */
+            html.dark-theme {
+                color-scheme: dark;
+                --ink: #f1f5f9;
+                --muted: #a6b2c5;
+                --line: #30394b;
+                --page: #111827;
+            }
+
+            html.dark-theme body {
+                background: var(--page);
+                color: var(--ink);
+            }
+
+            html.dark-theme .navbar {
+                background: #172033;
+                border-color: var(--line);
+            }
+
+            html.dark-theme .nav-links a,
+            html.dark-theme .user-name {
+                color: #e2e8f0;
+            }
+
+            html.dark-theme .theme-picker,
+            html.dark-theme .auth-login {
+                background: #222d40;
+                color: #f1f5f9;
+                border-color: var(--line);
+            }
+
+            html.dark-theme .website-card,
+            html.dark-theme .slider-card,
+            html.dark-theme .search-form,
+            html.dark-theme .search-form input,
+            html.dark-theme .search-form select,
+            html.dark-theme .empty-state,
+            html.dark-theme .auth-box {
+                background: #1e293b;
+                color: #f1f5f9;
+                border-color: var(--line);
+            }
+
+            html.dark-theme .site-text p,
+            html.dark-theme .slider-info p,
+            html.dark-theme .hero p,
+            html.dark-theme .section-heading p {
+                color: #a6b2c5;
+            }
+
+            html.dark-theme .slider-controls button {
+                background: #222d40;
+                color: white;
+                border-color: var(--line);
+            }
+
+            html.dark-theme .search-form input,
+            html.dark-theme .search-form select {
+                color: #f1f5f9;
+            }
+
+            html.dark-theme .search-form input::placeholder {
+                color: #a6b2c5;
+            }
+
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            background: var(--page);
+            color: var(--ink);
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+        a {
+            color: inherit;
+        }
+
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 16px 5%;
+            background: rgba(255,255,255,.96);
+            border-bottom: 1px solid var(--line);
+            backdrop-filter: blur(12px);
+        }
+
+        .brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            color: var(--ink);
+            text-decoration: none;
+            font-size: 23px;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .brand-mark {
+            display: grid;
+            place-items: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: var(--primary);
+            color: white;
+            font-size: 24px;
+            font-weight: 900;
+        }
+
+        .nav-links,
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .nav-links a {
+            color: #354056;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .nav-actions {
+            gap: 9px;
+        }
+
+        .theme-picker {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 10px;
+            border: 1px solid var(--line);
+            border-radius: 30px;
+            background: white;
+            cursor: pointer;
+        }
+
+        .theme-picker input {
+            width: 25px;
+            height: 25px;
+            padding: 0;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+        }
+
+        .auth-login,
+        .auth-signup {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 16px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: .2s;
+        }
+
+        .auth-login {
+            border: 1px solid var(--line);
+            background: white;
+        }
+
+        .auth-signup {
+            border: 1px solid var(--primary);
+            background: var(--primary);
+            color: white;
+        }
+
+        .auth-login:hover,
+        .auth-signup:hover {
+            transform: translateY(-2px);
+        }
+
+        main {
+            width: min(1400px, 90%);
+            min-height: 70vh;
+            margin: auto;
+            padding: 40px 0 60px;
+        }
+
+        .site-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 28px 5%;
+            background: #172033;
+            color: white;
+        }
+
+        .site-footer .brand {
+            color: white;
+        }
+
+        .site-footer p {
+            margin: 0;
+            color: #c1c9d8;
+            font-size: 13px;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+        }
+
+        .footer-links a {
+            color: #e4e9f3;
+            font-size: 13px;
+            text-decoration: none;
+        }
+
+        /* Keep your home page's own styles */
+        {% block extra_css %}{% endblock %}
+
+        @media (max-width: 760px) {
+            .navbar {
+                flex-wrap: wrap;
+                padding: 14px 5%;
+            }
+
+            .nav-links {
+                order: 3;
+                width: 100%;
+                overflow-x: auto;
+                gap: 18px;
+            }
+
+            .nav-links a {
+                white-space: nowrap;
+            }
+
+            .nav-actions {
+                gap: 6px;
+            }
+
+            .auth-login,
+            .auth-signup {
+                padding: 9px 11px;
+                font-size: 12px;
+            }
+
+            main {
+                width: 92%;
+                padding-top: 28px;
+            }
+
+            .site-footer {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+        }
+        
+        
+        .auth-links {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .auth-links form {
+            margin: 0;
+        }
+
+        .auth-button {
+            display: inline-block;
+            padding: 10px 16px;
+            border: 1px solid var(--primary);
+            border-radius: 9px;
+            background: transparent;
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .signup-button {
+            background: var(--primary);
+            color: white;
+        }
+
+        .user-name {
+            font-weight: 600;
+        }
+
+        
+        .theme-toggle {
+            padding: 10px 13px;
+            border: 1px solid var(--line);
+            border-radius: 25px;
+            background: white;
+            color: var(--ink);
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        html.dark-theme .theme-toggle {
+            background: #222d40;
+            color: white;
+            border-color: var(--line);
+        }
+
+    </style>
+</head>
+
+<body>
+<header class="navbar">
+    <a href="/" class="brand">
+        <span class="brand-mark">X</span>
+        <span>XVideos</span>
+    </a>
+
+    <nav class="nav-links">
+        <a href="/">Explore</a>
+        <a href="/#categories">Categories</a>
+        <a href="/#websites">Websites</a>
+    </nav>
+
+    <div class="nav-actions">
+        <label class="theme-picker" title="Change theme color">
+            
+        <button
+            type="button"
+            id="theme-toggle"
+            class="theme-toggle"
+            aria-label="Switch to dark theme"
+            title="Toggle dark mode"
+        >
+            🌙 Dark
+        </button>
+
+            <span>🎨</span>
+            <input
+                type="color"
+                id="theme-color"
+                value="#5b5cf0"
+                aria-label="Choose theme color"
+            >
+        </label>
+
+        {% if user.is_authenticated %}
+            <span class="user-name">
+                Hi, {{ user.username }}
+            </span>
+
+            <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="auth-login">
+                    Logout
+                </button>
+            </form>
+        {% else %}
+            <a class="auth-login" href="{% url 'login' %}">
+                Login
+            </a>
+
+            <a class="auth-signup" href="{% url 'signup' %}">
+                Sign Up
+            </a>
+        {% endif %}
+    </div>
+</header>
+
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+        <a href="/" class="brand">
+            <span class="brand-mark">X</span>
+            <span>XVideos</span>
+        </a>
+
+        <p>Your connected websites, all in one place.</p>
+
+        <nav class="footer-links">
+            <a href="/">Explore</a>
+            <a href="/#categories">Categories</a>
+            <a href="/admin/">Admin</a>
+        </nav>
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const picker = document.getElementById("theme-color");
+            if (!picker) return;
+
+            let savedColor = null;
+
+            try {
+                savedColor = localStorage.getItem("xvideos-theme-color");
+            } catch (error) {
+                // Continue with the default color if storage is unavailable.
+            }
+
+            function applyTheme(color) {
+                document.documentElement.style.setProperty(
+                    "--primary", color
+                );
+            }
+
+            if (savedColor && /^#[0-9a-fA-F]{6}$/.test(savedColor)) {
+                picker.value = savedColor;
+            }
+
+            applyTheme(picker.value);
+
+            picker.addEventListener("input", function () {
+                applyTheme(picker.value);
+
+                try {
+                    localStorage.setItem(
+                        "xvideos-theme-color",
+                        picker.value
+                    );
+                } catch (error) {
+                    // Theme still works for the current page.
+                }
+            });
+        });
+    </script>
+
+    
+    <script>
+    (function () {
+        const root = document.documentElement;
+        const button = document.getElementById("theme-toggle");
+
+        function applyTheme(theme) {
+            const isDark = theme === "dark";
+
+            root.classList.toggle("dark-theme", isDark);
+
+            if (button) {
+                button.textContent = isDark ? "☀️ Light" : "🌙 Dark";
+                button.setAttribute(
+                    "aria-label",
+                    isDark ? "Switch to light theme" : "Switch to dark theme"
+                );
+            }
+        }
+
+        let savedTheme = "light";
+
+        try {
+            savedTheme = localStorage.getItem("xvideos-theme") || "light";
+        } catch (error) {}
+
+        applyTheme(savedTheme);
+
+        if (button) {
+            button.addEventListener("click", function () {
+                const nextTheme = root.classList.contains("dark-theme")
+                    ? "light"
+                    : "dark";
+
+                applyTheme(nextTheme);
+
+                try {
+                    localStorage.setItem("xvideos-theme", nextTheme);
+                } catch (error) {}
+            });
+        }
+    })();
+    </script>
+
+
+    {% block extra_js %}{% endblock %} 
+</body>
+</html>

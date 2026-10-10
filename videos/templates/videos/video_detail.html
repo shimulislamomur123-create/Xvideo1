@@ -1,0 +1,17 @@
+
+{% extends "videos/base.html" %}
+
+{% block title %}Video Details{% endblock %}
+
+{% block content %}
+<h1>Video Details</h1>
+
+<p>
+    This project opens the original video website
+    directly from the home page.
+</p>
+
+<a class="button" href="{% url 'videos:home' %}">
+    Back to Home
+</a>
+{% endblock %}
